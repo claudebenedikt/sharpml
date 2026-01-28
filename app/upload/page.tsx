@@ -76,8 +76,8 @@ export default function UploadPage() {
   };
 
   const handleProcess = async () => {
-    if (files.length < 3) {
-      setError("Please upload at least 3 photos for best results");
+    if (files.length < 1) {
+      setError("Please upload at least 1 photo");
       return;
     }
 
@@ -275,18 +275,13 @@ export default function UploadPage() {
                 <button 
                   onClick={handleProcess} 
                   className="btn-primary text-lg px-10 py-4"
-                  disabled={files.length < 3}
+                  disabled={files.length < 1}
                 >
                   Create Memory →
                 </button>
-                {files.length < 3 && (
-                  <p className="text-amber-500/70 text-sm mt-2">
-                    Add {3 - files.length} more photo{3 - files.length !== 1 ? 's' : ''} (minimum 3)
-                  </p>
-                )}
-                {files.length >= 3 && files.length < 15 && (
+                {files.length >= 1 && files.length < 15 && (
                   <p className="text-gray-500 text-sm mt-2">
-                    Tip: 15-30 photos gives the best results
+                    Tip: More photos from different angles gives better results
                   </p>
                 )}
               </div>

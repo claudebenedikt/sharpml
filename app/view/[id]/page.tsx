@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { useParams } from "next/navigation";
@@ -29,12 +29,22 @@ const demoMemories: Record<string, { name: string; author: string; date: string;
   },
 };
 
+interface JobStatus {
+  status: 'queued' | 'processing' | 'complete' | 'failed' | 'not_found';
+  progress?: number;
+  stage?: string;
+  splatUrl?: string;
+  error?: string;
+}
+
 export default function ViewPage() {
   const params = useParams();
   const id = params.id as string;
   const [showShare, setShowShare] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [jobStatus, setJobStatus] = useState<JobStatus | null>(null);
+  const [isReady, setIsReady] = useState(id === "demo");
 
   const memory = demoMemories[id] || {
     name: "A Captured Moment",
@@ -44,8 +54,51 @@ export default function ViewPage() {
     category: "Memory",
   };
 
-  // Use job-specific splat, fallback to demo for the "demo" id
-  const splatUrl = id === "demo" ? "/splats/demo.splat" : `/splats/${id}.splat`;
+  // Poll job status for non-demo IDs
+  useEffect(() => {
+    if (id === "demo") {
+      setIsReady(true);
+      return;
+    }
+
+    const checkStatus = async () => {
+      try {
+        const res = await fetch(`/api/status/${id}`);
+        if (res.ok) {
+          const data = await res.json();
+          setJobStatus(data);
+          if (data.status === 'complete') {
+            setIsReady(true);
+          }
+        } else if (res.status === 404) {
+          // Job not in queue - check if splat file exists directly
+          const splatRes = await fetch(`/api/splat/${id}`, { method: 'HEAD' });
+          if (splatRes.ok) {
+            setIsReady(true);
+            setJobStatus({ status: 'complete' });
+          } else {
+            setJobStatus({ status: 'not_found' });
+          }
+        }
+      } catch (err) {
+        console.error('Failed to check status:', err);
+      }
+    };
+
+    checkStatus();
+    
+    // Poll every 3 seconds while processing
+    const interval = setInterval(() => {
+      if (!isReady && jobStatus?.status !== 'failed' && jobStatus?.status !== 'not_found') {
+        checkStatus();
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [id, isReady, jobStatus?.status]);
+
+  // Use API route for job-specific splats, static file for demo
+  const splatUrl = id === "demo" ? "/splats/demo.splat" : `/api/splat/${id}`;
 
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href);
@@ -108,59 +161,121 @@ export default function ViewPage() {
 
       {/* Viewer - full screen */}
       <div id="viewer-container" className="fixed inset-0">
-        <SplatViewer
-          splatUrl={splatUrl}
-          className="w-full h-full"
-          autoRotate={false}
-          showControls={true}
-        />
+        {isReady ? (
+          <SplatViewer
+            splatUrl={splatUrl}
+            className="w-full h-full"
+            autoRotate={false}
+            showControls={true}
+          />
+        ) : (
+          <div className="w-full h-full bg-black flex items-center justify-center">
+            <div className="text-center max-w-md px-6">
+              {jobStatus?.status === 'not_found' ? (
+                <>
+                  <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    </svg>
+                  </div>
+                  <h2 className="text-xl font-semibold text-white mb-2">Memory Not Found</h2>
+                  <p className="text-gray-400 mb-6">This memory doesn't exist or may have expired.</p>
+                  <Link href="/upload" className="px-6 py-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-medium">
+                    Create a Memory
+                  </Link>
+                </>
+              ) : jobStatus?.status === 'failed' ? (
+                <>
+                  <div className="w-16 h-16 rounded-full bg-red-500/10 flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  </div>
+                  <h2 className="text-xl font-semibold text-white mb-2">Processing Failed</h2>
+                  <p className="text-gray-400 mb-6">{jobStatus.error || 'Something went wrong. Please try again with different images.'}</p>
+                  <Link href="/upload" className="px-6 py-3 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-medium">
+                    Try Again
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <div className="w-20 h-20 mx-auto mb-6 relative">
+                    <div className="absolute inset-0 rounded-full border-2 border-gray-800"></div>
+                    <div
+                      className="absolute inset-0 rounded-full border-2 border-amber-500 border-t-transparent animate-spin"
+                      style={{ animationDuration: "1.5s" }}
+                    ></div>
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="text-xl font-bold text-amber-500">{jobStatus?.progress || 0}%</span>
+                    </div>
+                  </div>
+                  <h2 className="text-xl font-semibold text-white mb-2">Creating Your Memory</h2>
+                  <p className="text-gray-400 mb-4">{jobStatus?.stage || 'Starting up...'}</p>
+                  <div className="w-full max-w-xs mx-auto h-1.5 bg-gray-800 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-gradient-to-r from-amber-500 to-rose-500 transition-all duration-500"
+                      style={{ width: `${jobStatus?.progress || 0}%` }}
+                    ></div>
+                  </div>
+                  <p className="text-gray-600 text-sm mt-6">
+                    This usually takes 2-5 minutes. You can leave this page open.
+                  </p>
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Bottom info bar */}
-      <div className="fixed bottom-0 left-0 right-0 z-50 p-4 pointer-events-none">
-        <div className="max-w-2xl mx-auto">
-          <div className="bg-black/60 backdrop-blur-md rounded-xl p-4 border border-white/5 pointer-events-auto">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">
-                    {memory.category}
-                  </span>
+      {/* Bottom info bar - only show when ready */}
+      {isReady && (
+        <div className="fixed bottom-0 left-0 right-0 z-50 p-4 pointer-events-none">
+          <div className="max-w-2xl mx-auto">
+            <div className="bg-black/60 backdrop-blur-md rounded-xl p-4 border border-white/5 pointer-events-auto">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">
+                      {memory.category}
+                    </span>
+                  </div>
+                  <h1 className="text-lg font-semibold text-white mb-1">{memory.name}</h1>
+                  <p className="text-gray-400 text-sm line-clamp-2">{memory.description}</p>
+                  <p className="text-gray-500 text-xs mt-2">
+                    Created by {memory.author} · {memory.date}
+                  </p>
                 </div>
-                <h1 className="text-lg font-semibold text-white mb-1">{memory.name}</h1>
-                <p className="text-gray-400 text-sm line-clamp-2">{memory.description}</p>
-                <p className="text-gray-500 text-xs mt-2">
-                  Created by {memory.author} · {memory.date}
-                </p>
+                <Link 
+                  href="/upload" 
+                  className="shrink-0 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 transition-colors text-black font-medium text-sm"
+                >
+                  Create Yours
+                </Link>
               </div>
-              <Link 
-                href="/upload" 
-                className="shrink-0 px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-400 transition-colors text-black font-medium text-sm"
-              >
-                Create Yours
-              </Link>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* Controls hint */}
-      <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-40 pointer-events-none">
-        <div className="bg-black/40 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs text-gray-400 flex items-center gap-3">
-          <span className="flex items-center gap-1">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-            </svg>
-            Drag to rotate
-          </span>
-          <span className="flex items-center gap-1">
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
-            </svg>
-            Scroll to zoom
-          </span>
+      {/* Controls hint - only show when ready */}
+      {isReady && (
+        <div className="fixed bottom-28 left-1/2 -translate-x-1/2 z-40 pointer-events-none">
+          <div className="bg-black/40 backdrop-blur-sm rounded-full px-3 py-1.5 text-xs text-gray-400 flex items-center gap-3">
+            <span className="flex items-center gap-1">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+              </svg>
+              Drag to rotate
+            </span>
+            <span className="flex items-center gap-1">
+              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v6m3-3H7" />
+              </svg>
+              Scroll to zoom
+            </span>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Share modal */}
       {showShare && (
