@@ -171,7 +171,39 @@ RUNPOD_API_KEY=xxx
 REPLICATE_API_TOKEN=xxx
 ```
 
-## Cloud GPU Options
+## Local Processing: crystal-gausplat (Apple Silicon)
+
+**Found it!** Full Gaussian Splatting pipeline that runs natively on Mac:
+- Repo: `github.com/skuznetsov/crystal-gausplat`
+- Location: `/Users/clawd/clawd/crystal-gausplat`
+
+### Capabilities
+- Video/images → 3D mesh (full pipeline)
+- MASt3R for dense stereo matching
+- Metal compute shaders (M1/M2/M3/M4 optimized)
+- Outputs: STL, OBJ, PLY, and Gaussian splat files
+
+### Usage
+```bash
+# From video
+./gsplat scan --video object.MOV --output model.stl --frames 50
+
+# From images  
+./gsplat train --images ./photos --output ./scene --iterations 30000
+
+# Export splat
+./gsplat render --scene ./scene --output render.png
+```
+
+### Dependencies
+```bash
+brew install crystal ffmpeg
+make  # Compiles Metal shaders
+```
+
+### Cost: $0 (runs locally on Mac mini M4)
+
+## Cloud GPU Options (Backup)
 
 | Service | Cost | Latency | Notes |
 |---------|------|---------|-------|
@@ -180,7 +212,7 @@ REPLICATE_API_TOKEN=xxx
 | **Replicate** | ~$0.40/job | 5-15 min | Simple API, pre-built models |
 | **Vast.ai** | ~$0.20/job | 10-20 min | Cheapest, less reliable |
 
-**Recommended**: Start with Replicate (simplest API), migrate to RunPod for volume.
+**Recommended**: Use local crystal-gausplat first. Fall back to cloud if needed.
 
 ## Monitoring & Alerts
 

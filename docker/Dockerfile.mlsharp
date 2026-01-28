@@ -1,0 +1,63 @@
+# SharpML Processing Container
+# Runs Apple's ml-sharp for Gaussian splatting on Apple Silicon
+#
+# SECURITY:
+# - No network access at runtime (--network=none)
+# - Read-only root filesystem where possible
+# - Resource limits enforced by Docker
+# - Non-root user for processing
+
+FROM python:3.13-slim
+
+# Security: Create non-root user
+RUN groupadd -r sharpml && useradd -r -g sharpml sharpml
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install uv for fast Python package management
+RUN curl -LsSf https://astral.sh/uv/install.sh | sh
+ENV PATH="/root/.local/bin:$PATH"
+
+# Clone ml-sharp
+WORKDIR /app
+RUN git clone --depth 1 https://github.com/apple/ml-sharp.git .
+
+# Install Python dependencies
+RUN uv venv && \
+    . .venv/bin/activate && \
+    uv pip install -r requirements.txt
+
+# Create directories for I/O
+RUN mkdir -p /input /output && \
+    chown -R sharpml:sharpml /input /output /app
+
+# Pre-download the model (2.6GB) so it's cached in image
+# This runs as root during build, model goes to /root/.cache
+RUN . .venv/bin/activate && \
+    python -c "from sharp.model import load_model; load_model()" || true
+
+# Copy model cache to user-accessible location
+RUN mkdir -p /home/sharpml/.cache && \
+    cp -r /root/.cache/torch /home/sharpml/.cache/ 2>/dev/null || true && \
+    chown -R sharpml:sharpml /home/sharpml
+
+# Switch to non-root user
+USER sharpml
+WORKDIR /app
+
+# Set environment
+ENV HOME=/home/sharpml
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Entry point script
+COPY --chown=sharpml:sharpml docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh 2>/dev/null || true
+
+# Default command: run prediction
+# Input: /input (mounted volume with images)
+# Output: /output (mounted volume for results)
+CMD ["sharp", "predict", "-i", "/input", "-o", "/output"]

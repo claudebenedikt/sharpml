@@ -44,7 +44,8 @@ export default function ViewPage() {
     category: "Memory",
   };
 
-  const splatUrl = "/splats/demo.splat";
+  // Use job-specific splat, fallback to demo for the "demo" id
+  const splatUrl = id === "demo" ? "/splats/demo.splat" : `/splats/${id}.splat`;
 
   const copyLink = () => {
     navigator.clipboard.writeText(window.location.href);

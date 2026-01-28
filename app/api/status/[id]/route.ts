@@ -1,28 +1,11 @@
 /**
  * Job Status API Route
  * 
- * Returns the current status of a processing job.
- * In production, this would query the job queue (BullMQ/Redis).
+ * Returns real-time status of processing jobs from Redis queue.
  */
 
 import { NextRequest, NextResponse } from "next/server";
-
-// Mock job statuses for demo
-const mockJobs: Record<string, {
-  status: 'queued' | 'processing' | 'complete' | 'failed';
-  progress: number;
-  stage?: string;
-  splatUrl?: string;
-  error?: string;
-  createdAt: string;
-}> = {
-  demo: {
-    status: 'complete',
-    progress: 100,
-    splatUrl: '/splats/demo.splat',
-    createdAt: '2026-01-27T12:00:00Z',
-  },
-};
+import { getJobStatus } from "@/lib/queue";
 
 export async function GET(
   request: NextRequest,
@@ -30,7 +13,7 @@ export async function GET(
 ) {
   const { id } = await params;
 
-  // Validate ID format (UUID-like)
+  // Validate ID format (alphanumeric, max 36 chars)
   if (!/^[a-zA-Z0-9\-]{1,36}$/.test(id)) {
     return NextResponse.json(
       { error: "Invalid job ID" },
@@ -38,35 +21,56 @@ export async function GET(
     );
   }
 
-  // TODO: Query actual job status from BullMQ
-  // const job = await processingQueue.getJob(id);
-  
-  // For demo, return mock data or simulated progress
-  const job = mockJobs[id];
-  
-  if (job) {
-    return NextResponse.json({
+  try {
+    const jobStatus = await getJobStatus(id);
+    
+    if (jobStatus.status === 'not_found') {
+      return NextResponse.json(
+        { error: "Job not found" },
+        { status: 404 }
+      );
+    }
+
+    // Map internal status to user-friendly response
+    const response: Record<string, unknown> = {
       id,
-      ...job,
-    });
+      status: jobStatus.status,
+      progress: jobStatus.progress || 0,
+    };
+
+    // Add stage description based on progress
+    if (jobStatus.status === 'processing') {
+      const progress = jobStatus.progress || 0;
+      if (progress < 15) {
+        response.stage = 'Validating images...';
+      } else if (progress < 70) {
+        response.stage = 'Generating 3D structure...';
+      } else if (progress < 90) {
+        response.stage = 'Finalizing...';
+      } else {
+        response.stage = 'Almost done...';
+      }
+    }
+
+    if (jobStatus.status === 'complete' && jobStatus.result) {
+      response.splatUrl = jobStatus.result.splatUrl;
+      response.processedImages = jobStatus.result.processedImages;
+      response.viewUrl = `/view/${id}`;
+    }
+
+    if (jobStatus.status === 'failed') {
+      // Sanitize error message for user
+      response.error = 'Processing failed. Please try again with different images.';
+    }
+
+    return NextResponse.json(response);
+
+  } catch (error) {
+    console.error('Status API error:', error);
+    
+    return NextResponse.json(
+      { error: "Failed to get job status" },
+      { status: 500 }
+    );
   }
-
-  // Simulate a job in progress
-  // In production, this would return actual job status
-  const createdTime = Date.now() - 60000; // Assume created 1 minute ago
-  const elapsed = Date.now() - createdTime;
-  const estimatedTotal = 300000; // 5 minutes
-  const progress = Math.min(95, Math.floor((elapsed / estimatedTotal) * 100));
-
-  return NextResponse.json({
-    id,
-    status: progress < 95 ? 'processing' : 'complete',
-    progress,
-    stage: progress < 30 ? 'Analyzing images...' :
-           progress < 60 ? 'Building 3D structure...' :
-           progress < 90 ? 'Refining details...' :
-           'Finalizing...',
-    createdAt: new Date(createdTime).toISOString(),
-    splatUrl: progress >= 95 ? `/splats/demo.splat` : undefined,
-  });
 }
