@@ -47,8 +47,8 @@ export default function ViewPage() {
     description: "An interactive 3D Gaussian splat scene.",
   };
 
-  // Use a demo splat URL - in production this would come from your backend
-  const splatUrl = "https://huggingface.co/cakewalk/splat-data/resolve/main/nike.splat";
+  // Use local splat file for demo
+  const splatUrl = "/splats/demo.splat";
 
   const copyShareLink = () => {
     navigator.clipboard.writeText(window.location.href);

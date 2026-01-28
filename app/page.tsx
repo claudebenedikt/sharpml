@@ -12,214 +12,269 @@ export default function LandingPage() {
       <nav className="fixed top-0 left-0 right-0 z-50 glass">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-rose-600 flex items-center justify-center">
               <span className="text-white font-bold text-sm">S</span>
             </div>
             <span className="text-xl font-bold">SharpML</span>
           </Link>
           <div className="hidden md:flex items-center gap-8">
-            <Link href="#features" className="text-gray-400 hover:text-white transition-colors">Features</Link>
-            <Link href="#how-it-works" className="text-gray-400 hover:text-white transition-colors">How it Works</Link>
+            <Link href="#how" className="text-gray-400 hover:text-white transition-colors">How It Works</Link>
+            <Link href="#moments" className="text-gray-400 hover:text-white transition-colors">For Your Moments</Link>
             <Link href="/pricing" className="text-gray-400 hover:text-white transition-colors">Pricing</Link>
           </div>
           <div className="flex items-center gap-4">
             <Link href="/login" className="text-gray-400 hover:text-white transition-colors">Sign In</Link>
-            <Link href="/upload" className="btn-primary text-sm">Get Started</Link>
+            <Link href="/upload" className="btn-primary text-sm">Create a Memory</Link>
           </div>
         </div>
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-sm text-gray-400 mb-8">
-            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            Now in public beta
-          </div>
-          
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-            Transform Photos into<br />
-            <span className="gradient-text">3D Memories</span>
+      <section className="pt-32 pb-16 px-6">
+        <div className="max-w-4xl mx-auto text-center">
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 leading-tight">
+            Step Back Into<br />
+            <span className="gradient-text">Your Favorite Moments</span>
           </h1>
           
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto mb-10">
-            Upload your photos and watch them come alive as stunning, interactive 3D Gaussian splats. 
-            Relive your memories from every angle.
+          <p className="text-xl text-gray-300 max-w-2xl mx-auto mb-10 leading-relaxed">
+            What if you could walk through your wedding day again? Revisit grandma's kitchen 
+            one more time? Your photos hold more than you think. We help you unlock it.
           </p>
           
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <Link href="/upload" className="btn-primary text-lg px-8 py-4">
-              Start Creating — Free
+              Create Your First Memory
             </Link>
             <Link href="/view/demo" className="btn-secondary text-lg px-8 py-4">
-              View Demo ↗
+              See an Example
             </Link>
           </div>
-
-          {/* Hero Visual */}
-          <div className="relative max-w-4xl mx-auto">
-            <div className="aspect-video rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 overflow-hidden animate-pulse-glow">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <div className="w-20 h-20 rounded-full bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center mx-auto mb-4 animate-float">
-                    <svg className="w-10 h-10 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 10a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z" />
-                    </svg>
-                  </div>
-                  <p className="text-gray-500">Interactive 3D Preview</p>
-                </div>
-              </div>
-            </div>
-            
-            {/* Floating elements */}
-            <div className="absolute -top-4 -left-4 w-24 h-24 rounded-xl bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 animate-float" style={{ animationDelay: '0.5s' }}></div>
-            <div className="absolute -bottom-4 -right-4 w-32 h-32 rounded-xl bg-gradient-to-br from-purple-500/10 to-transparent border border-purple-500/20 animate-float" style={{ animationDelay: '1s' }}></div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section id="features" className="py-20 px-6">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">Why SharpML?</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              The easiest way to turn flat photos into immersive 3D experiences
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                icon: (
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                ),
-                title: "Simple Upload",
-                description: "Drag and drop your photos. Our AI handles the complex 3D reconstruction automatically."
-              },
-              {
-                icon: (
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7l-2 1m2-1l-2-1m2 1v2.5M14 4l-2-1-2 1M4 7l2-1M4 7l2 1M4 7v2.5M12 21l-2-1m2 1l2-1m-2 1v-2.5M6 18l-2-1v-2.5M18 18l2-1v-2.5" />
-                  </svg>
-                ),
-                title: "Stunning 3D",
-                description: "State-of-the-art Gaussian splatting creates photorealistic 3D scenes from your images."
-              },
-              {
-                icon: (
-                  <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z" />
-                  </svg>
-                ),
-                title: "Easy Sharing",
-                description: "Share your 3D memories with a simple link. No app needed — works in any browser."
-              }
-            ].map((feature, i) => (
-              <div key={i} className="card p-8">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500/20 to-purple-500/20 flex items-center justify-center mb-6 text-blue-400">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-semibold mb-3">{feature.title}</h3>
-                <p className="text-gray-400">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How it Works */}
-      <section id="how-it-works" className="py-20 px-6 bg-gradient-to-b from-transparent via-blue-950/10 to-transparent">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold mb-4">How It Works</h2>
-            <p className="text-gray-400 max-w-2xl mx-auto">
-              Three simple steps to bring your memories to life
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8 relative">
-            {/* Connection line */}
-            <div className="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 opacity-30"></div>
-            
-            {[
-              { step: "01", title: "Upload Photos", desc: "Select multiple photos of the same scene from different angles" },
-              { step: "02", title: "AI Processing", desc: "Our neural network reconstructs a detailed 3D model in minutes" },
-              { step: "03", title: "Explore & Share", desc: "Navigate your 3D memory and share it with anyone" }
-            ].map((item, i) => (
-              <div key={i} className="text-center relative">
-                <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center mx-auto mb-6 text-white font-bold text-lg relative z-10">
-                  {item.step}
-                </div>
-                <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
-                <p className="text-gray-400">{item.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing Preview */}
-      <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold mb-4">Simple, Transparent Pricing</h2>
-          <p className="text-gray-400 mb-8">Start free. Upgrade when you need more.</p>
           
-          <div className="grid md:grid-cols-3 gap-6">
+          <p className="text-gray-500 text-sm">
+            No credit card needed · First memory is free
+          </p>
+        </div>
+      </section>
+
+      {/* Demo Preview */}
+      <section className="py-8 px-6">
+        <div className="max-w-4xl mx-auto">
+          <div className="aspect-video rounded-2xl bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700 overflow-hidden relative">
+            <div className="absolute inset-0 flex items-center justify-center">
+              <Link href="/view/demo" className="group">
+                <div className="w-20 h-20 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center mx-auto mb-4 group-hover:bg-white/20 transition-colors cursor-pointer">
+                  <svg className="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                  </svg>
+                </div>
+                <p className="text-gray-300 group-hover:text-white transition-colors">Click to explore in 3D</p>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Social Proof - Human Stories */}
+      <section className="py-16 px-6 bg-gradient-to-b from-transparent via-amber-950/10 to-transparent">
+        <div className="max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="card p-6">
+              <p className="text-gray-300 mb-4 italic">
+                "I lost my dad two years ago. Being able to walk through his workshop again, 
+                seeing his tools exactly where he left them... I didn't know I needed this."
+              </p>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-blue-600"></div>
+                <div>
+                  <p className="font-medium text-sm">Sarah M.</p>
+                  <p className="text-gray-500 text-xs">Memorial</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="card p-6">
+              <p className="text-gray-300 mb-4 italic">
+                "We converted our wedding venue into a memory. Now we revisit it every anniversary. 
+                Way better than flipping through a photo album."
+              </p>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-rose-400 to-rose-600"></div>
+                <div>
+                  <p className="font-medium text-sm">James & Priya K.</p>
+                  <p className="text-gray-500 text-xs">Wedding</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="card p-6">
+              <p className="text-gray-300 mb-4 italic">
+                "My kids are growing so fast. I captured their playroom before they outgrow it. 
+                Someday they'll thank me."
+              </p>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-400 to-emerald-600"></div>
+                <div>
+                  <p className="font-medium text-sm">David L.</p>
+                  <p className="text-gray-500 text-xs">Family</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works - Simple */}
+      <section id="how" className="py-20 px-6">
+        <div className="max-w-4xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-4">How It Works</h2>
+          <p className="text-gray-400 text-center mb-12 max-w-xl mx-auto">
+            No technical skills needed. If you can take photos on your phone, you can do this.
+          </p>
+
+          <div className="space-y-12">
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="w-16 h-16 rounded-full bg-amber-500/20 flex items-center justify-center text-2xl font-bold text-amber-400 shrink-0">
+                1
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Walk around and snap photos</h3>
+                <p className="text-gray-400">
+                  Take 15-30 photos of your space from different angles. Walk slowly around the room 
+                  or object you want to capture. More angles = better result.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="w-16 h-16 rounded-full bg-rose-500/20 flex items-center justify-center text-2xl font-bold text-rose-400 shrink-0">
+                2
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Upload and wait a few minutes</h3>
+                <p className="text-gray-400">
+                  Our technology stitches your photos into a navigable 3D space. 
+                  Takes about 5-10 minutes depending on how many photos you uploaded.
+                </p>
+              </div>
+            </div>
+            
+            <div className="flex flex-col md:flex-row items-center gap-8">
+              <div className="w-16 h-16 rounded-full bg-purple-500/20 flex items-center justify-center text-2xl font-bold text-purple-400 shrink-0">
+                3
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold mb-2">Revisit anytime, share with anyone</h3>
+                <p className="text-gray-400">
+                  Your memory lives at a unique link. Open it on any device — phone, tablet, computer. 
+                  Share with family across the world. No app required.
+                </p>
+              </div>
+            </div>
+          </div>
+          
+          <div className="text-center mt-12">
+            <Link href="/upload" className="btn-primary text-lg px-8 py-4">
+              Try It Free
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* For Your Moments */}
+      <section id="moments" className="py-20 px-6 bg-gradient-to-b from-transparent via-purple-950/10 to-transparent">
+        <div className="max-w-5xl mx-auto">
+          <h2 className="text-3xl font-bold text-center mb-4">For Your Most Important Moments</h2>
+          <p className="text-gray-400 text-center mb-12 max-w-xl mx-auto">
+            Some spaces matter more than others. These are worth preserving.
+          </p>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {[
-              { name: "Free", price: "$0", features: ["3 splats/month", "720p quality", "7 day storage"] },
-              { name: "Pro", price: "$12", features: ["Unlimited splats", "4K quality", "Forever storage", "Priority processing"], popular: true },
-              { name: "Team", price: "$39", features: ["Everything in Pro", "5 team members", "API access", "Custom branding"] }
-            ].map((plan, i) => (
-              <div key={i} className={`card p-6 relative ${plan.popular ? 'border-blue-500/50' : ''}`}>
-                {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full text-xs font-semibold">
-                    Most Popular
-                  </div>
-                )}
-                <h3 className="text-xl font-semibold mb-2">{plan.name}</h3>
-                <div className="text-3xl font-bold mb-4">{plan.price}<span className="text-sm text-gray-400 font-normal">/mo</span></div>
-                <ul className="text-left text-sm text-gray-400 space-y-2 mb-6">
-                  {plan.features.map((f, j) => (
-                    <li key={j} className="flex items-center gap-2">
-                      <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                      </svg>
-                      {f}
-                    </li>
-                  ))}
-                </ul>
-                <Link href="/pricing" className={plan.popular ? "btn-primary w-full block text-center" : "btn-secondary w-full block text-center"}>
-                  {plan.popular ? "Get Started" : "Learn More"}
-                </Link>
+              { emoji: "💒", title: "Weddings", desc: "Your venue, your day, forever explorable" },
+              { emoji: "👶", title: "Baby Moments", desc: "The nursery before they outgrow it" },
+              { emoji: "🕯️", title: "Memorials", desc: "Keep loved ones' spaces alive" },
+              { emoji: "✈️", title: "Travel", desc: "That Airbnb you never want to forget" },
+              { emoji: "🏠", title: "Homes", desc: "Before you move, after you renovate" },
+              { emoji: "🎄", title: "Holidays", desc: "The tree, the decorations, the chaos" },
+              { emoji: "🎓", title: "Milestones", desc: "Graduation, first apartment, big moments" },
+              { emoji: "🐕", title: "Pets", desc: "Their favorite spot on the couch" },
+            ].map((item, i) => (
+              <div key={i} className="card p-5 text-center hover:border-gray-600 transition-colors">
+                <div className="text-3xl mb-3">{item.emoji}</div>
+                <h3 className="font-semibold mb-1">{item.title}</h3>
+                <p className="text-gray-400 text-sm">{item.desc}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* Simple Pricing */}
       <section className="py-20 px-6">
-        <div className="max-w-4xl mx-auto">
-          <div className="card p-12 text-center bg-gradient-to-br from-blue-950/50 to-purple-950/50 border-blue-500/20">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">Ready to Relive Your Memories?</h2>
-            <p className="text-gray-400 mb-8 max-w-xl mx-auto">
-              Join thousands of creators turning their favorite moments into interactive 3D experiences.
-            </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
-              <input
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-lg bg-gray-900 border border-gray-700 focus:border-blue-500 focus:outline-none transition-colors"
-              />
-              <button className="btn-primary whitespace-nowrap px-8">Get Early Access</button>
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl font-bold mb-4">Simple Pricing</h2>
+          <p className="text-gray-400 mb-12">Pay only when you create. No subscriptions, no surprises.</p>
+          
+          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+            <div className="card p-8">
+              <h3 className="text-xl font-semibold mb-2">First Memory</h3>
+              <div className="text-4xl font-bold mb-4">Free</div>
+              <p className="text-gray-400 text-sm mb-6">Try it out, no credit card needed</p>
+              <ul className="text-left text-sm text-gray-400 space-y-2 mb-6">
+                <li className="flex items-center gap-2">
+                  <span className="text-green-500">✓</span> Full quality 3D memory
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-500">✓</span> Shareable link
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-500">✓</span> Hosted forever
+                </li>
+              </ul>
+              <Link href="/upload" className="btn-secondary w-full block text-center">
+                Start Free
+              </Link>
+            </div>
+            
+            <div className="card p-8 border-amber-500/30">
+              <h3 className="text-xl font-semibold mb-2">Additional Memories</h3>
+              <div className="text-4xl font-bold mb-4">$5<span className="text-lg text-gray-400 font-normal"> each</span></div>
+              <p className="text-gray-400 text-sm mb-6">Buy as you go, no commitment</p>
+              <ul className="text-left text-sm text-gray-400 space-y-2 mb-6">
+                <li className="flex items-center gap-2">
+                  <span className="text-green-500">✓</span> Everything in Free
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-500">✓</span> Priority processing
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-500">✓</span> Higher resolution
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-green-500">✓</span> Download splat file
+                </li>
+              </ul>
+              <Link href="/upload" className="btn-primary w-full block text-center">
+                Get Started
+              </Link>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Final CTA */}
+      <section className="py-20 px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-6">
+            Some moments deserve more than a flat photo.
+          </h2>
+          <p className="text-gray-400 text-lg mb-8">
+            Start with one memory. See how it feels to step back inside.
+          </p>
+          <Link href="/upload" className="btn-primary text-lg px-10 py-4">
+            Create Your First Memory — Free
+          </Link>
         </div>
       </section>
 
@@ -227,15 +282,15 @@ export default function LandingPage() {
       <footer className="py-12 px-6 border-t border-gray-800">
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded bg-gradient-to-br from-blue-500 to-purple-600"></div>
+            <div className="w-6 h-6 rounded bg-gradient-to-br from-amber-500 to-rose-600"></div>
             <span className="font-semibold">SharpML</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-gray-400">
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
-            <Link href="/contact" className="hover:text-white transition-colors">Contact</Link>
+            <a href="mailto:hello@sharpml.com" className="hover:text-white transition-colors">Contact</a>
           </div>
-          <p className="text-sm text-gray-500">© 2025 SharpML. All rights reserved.</p>
+          <p className="text-sm text-gray-500">Made with care in Denver</p>
         </div>
       </footer>
     </div>
